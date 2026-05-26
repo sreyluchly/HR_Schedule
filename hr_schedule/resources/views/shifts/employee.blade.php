@@ -105,7 +105,6 @@
         @if(!empty($searchName))
         
             @php
-                // ១. ច្រកទិន្នន័យតាមប្រភេទដើម្បីងាយស្រួលបង្ហាញក្នុងប្រវត្តិ (History Filtering)
                 $pendingShifts = $myPostedShifts->where('status', 'pending');
                 $reviewingPosted = $myPostedShifts->where('status', 'reviewing');
                 $reviewingClaimed = $myClaimedShifts->where('status', 'reviewing');
@@ -116,10 +115,8 @@
                 $rejectedPosted = $myPostedShifts->where('status', 'rejected');
                 $rejectedClaimed = $myClaimedShifts->where('status', 'rejected');
 
-                // ២. ឆែកលក្ខខណ្ឌសម្រាប់លោតផ្ទាំង Alert ព្រមាន (SweetAlert2)
                 $isRejected = ($rejectedPosted->isNotEmpty() || $rejectedClaimed->isNotEmpty()) ? 'true' : 'false';
                 
-                // ស្វែងរកសារមូលហេតុបដិសេធចុងក្រោយគេបង្អស់
                 $reason = 'មិនមានការបញ្ជាក់ហេតុផលឡើយ';
                 if($rejectedPosted->isNotEmpty() && !empty($rejectedPosted->first()->rejection_reason)) {
                     $reason = $rejectedPosted->first()->rejection_reason;
@@ -286,7 +283,6 @@
                 });
             }
 
-            // 🚨 លោតផ្ទាំង Alert Popup ប្រាប់ភ្លាមៗចំកណ្ដាលអេក្រង់ បើមានស្ថានភាព Rejected ក្នុងប្រវត្តិ
             const rejectStatus = document.getElementById('reject-status-trigger');
             const empName = document.getElementById('employee-name-trigger');
             const rejectReason = document.getElementById('reject-reason-trigger');

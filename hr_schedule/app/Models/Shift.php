@@ -10,8 +10,8 @@ class Shift extends Model
         'employee_id',
         'posted_by',
         'shift_date',
-        'original_shift', // <--- បន្ថែមត្រង់នេះ
-        'new_shift',      // <--- បន្ថែមត្រង់នេះ
+        'original_shift',
+        'new_shift',
         'claimed_by',
         'status',
     ];
