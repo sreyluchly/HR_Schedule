@@ -52,7 +52,7 @@ class ShiftController extends Controller
         if ($hasPostedToday) {
             return redirect()->back()
                 ->withInput()
-                ->with('error', '❌ លោកអ្នកបានបង្ហោះសំណើរួចរាល់ហើយសម្រាប់ថ្ងៃនេះ! សូមរង់ចាំដល់ថ្ងៃស្អែក ទើបអាចបង្ហោះសំណើថ្មីបានទៀត។');
+                ->with('error', '❌ You have already submitted a shift swap request today! Please wait until tomorrow to submit a new request.');
         }
 
         Shift::create([
@@ -64,7 +64,7 @@ class ShiftController extends Controller
             'status'         => 'pending'
         ]);
 
-        return redirect()->back()->with('success', '✨ បង្ហោះសំណើប្ដូរវេនបានជោគជ័យ!');
+        return redirect()->back()->with('success', '✨ Shift swap request submitted successfully!');
     }
 
     public function claim(Request $request, $id) 
@@ -83,7 +83,12 @@ class ShiftController extends Controller
             ->exists();
 
         if ($hasClaimedOnSameDay) {
-            return redirect()->back()->with('error', '❌ មិនអាចស្នើសុំបានទេ! អ្នកបានសុំយកវេនការងារមួយផ្សេងទៀតរួចរាល់ហើយក្នុងថ្ងៃទី ' . $currentShift->shift_date . ' នេះ។ សូមជ្រើសរើសថ្ងៃផ្សេងជំនួសវិញ។');
+            return redirect()->back()->with(
+                'error',
+                '❌ Request cannot be submitted! You have already claimed another shift on ' .
+                $currentShift->shift_date .
+                '. Please choose a different date.'
+            );
         }
 
         $currentShift->update([
@@ -91,19 +96,22 @@ class ShiftController extends Controller
             'status'     => 'reviewing'
         ]);
 
-        return redirect()->back()->with('success', '✨ ស្នើសុំប្ដូរវេនបានជោគជ័យ! រង់ចាំ HR ពិនិត្យ និងអនុម័ត។');
+        return redirect()->back()->with('success', '✨ Shift claim request submitted successfully! Please wait for HR approval.');
     }
 
-    public function approve($id) {
+    public function approve($id)
+    {
         Shift::findOrFail($id)->update(['status' => 'approved']);
-        return redirect()->back()->with('success', 'បានអនុម័តការប្ដូរវេន!');
+
+        return redirect()->back()->with('success', 'Shift swap request approved successfully!');
     }
 
-    public function reject($id) {
+    public function reject($id)
+    {
         Shift::findOrFail($id)->update([
             'status' => 'rejected'
         ]);
-    
-    return redirect()->back()->with('info', 'បានបដិសេធសំណើប្ដូរវេននេះរួចរាល់!');
-}
+
+        return redirect()->back()->with('info', 'Shift swap request has been rejected.');
+    }
 }
